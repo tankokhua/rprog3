@@ -5,7 +5,7 @@ tidy_data <- function(directory=DEFAULT_DIR)
 
       
    #read dataset keeping only measurements with "-mean()" and "-std()".
-   if(0){
+   if(0){ # 1 for debug
      dt1 <- read_dataset("trial",  directory)
      dt2 <- read_dataset("trial2", directory)
    } else {
@@ -13,7 +13,7 @@ tidy_data <- function(directory=DEFAULT_DIR)
      dt2 <- read_dataset("test", directory)
    }
    # combine "train" and "test" datasets
-   print("Merging \"train\" and \"test\" datasets.")
+   print('Merging <train> and <test> datasets.')
    dt <- merge(dt1, dt2, all=TRUE)
     
    meas_names <- names(dt)[3:length(names(dt))]
@@ -65,7 +65,7 @@ read_dataset <- function(datatype, dir=DEFAULT_DIR){
   X_dt <- read_file(X_file, dir)
   X_dt
   for (idx in mean_std_idx) {
-    dt_names <- c(dt_names, vec_features[idx,2])
+    dt_names <- c(dt_names, as.character(vec_features[idx,2]))
     dt <- cbind(dt, X_dt[,idx])
   }
   names(dt) <- dt_names
