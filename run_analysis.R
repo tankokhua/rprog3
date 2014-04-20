@@ -4,11 +4,27 @@ tidy_data <- function(directory=DEFAULT_DIR)
    cat(sprintf("Doing data cleaning in <%s> directory ...\n", directory))
 
       
-   #read training set
-   dt1 <- read_data("trial",  directory)
-   dt2 <- read_data("trial2", directory)
-   dt <- merge(dt1, dt2, by.x="subjects", by.y="subjects")
-   dt
+   #read dataset keeping only measurements with "-mean()" and "-std()".
+   if(0){
+     dt1 <- read_dataset("trial",  directory)
+     dt2 <- read_dataset("trial2", directory)
+   } else {
+     dt1 <- read_dataset("train", directory)
+     dt2 <- read_dataset("test", directory)
+   }
+   # combine "train" and "test" datasets
+   print("Merging \"train\" and \"test\" datasets.")
+   dt <- merge(dt1, dt2, all=TRUE)
+    
+   meas_names <- names(dt)[3:length(names(dt))]
+   library(reshape2)
+   melt_dt <- melt(dt, id=c("subjects", "activities"), measure.vars=meas_names)
+   tidy <- dcast(melt_dt, subjects+activities~variable, mean)
+   
+   # write to file
+   cat(sprintf("Writing to %s/tidydata.txt.", getwd()))
+   write.csv(tidy, file="tidydata.txt", row.names=FALSE)
+   tidy
 }
 
 read_file <- function(filename, dir=DEFAULT_DIR) {
@@ -20,15 +36,15 @@ read_file <- function(filename, dir=DEFAULT_DIR) {
   }
   dt
 }
-read_data <- function(datatype, dir=DEFAULT_DIR){
+read_dataset <- function(datatype, dir=DEFAULT_DIR){
   # subject_<datatype>.txt: contains raw measurement data
   # X_<datatype>.txt      : 30 subjects
   # y_<datatype>.txt      : 6 activity types
-  cat(sprintf("Working on <%s> dataset...\n", datatype))
+  cat(sprintf("Working on <%s> dataset ...\n", datatype))
 
   # read activity_labels.txt
   act_labels <- read_file("activity_labels.txt", dir)
-  act_labels[,2] <- sapply(act[,2], tolower)
+  act_labels[,2] <- sapply(act_labels[,2], tolower)
   
   y_file = paste0(datatype, "/y_", datatype, ".txt")
   y_dt <- read_file(y_file, dir)
@@ -48,9 +64,8 @@ read_data <- function(datatype, dir=DEFAULT_DIR){
   X_file = paste0(datatype, "/X_", datatype, ".txt")
   X_dt <- read_file(X_file, dir)
   X_dt
-  
   for (idx in mean_std_idx) {
-    dt_names <- c(dt_names, sub("-","_", vec_features[idx,2]))
+    dt_names <- c(dt_names, vec_features[idx,2])
     dt <- cbind(dt, X_dt[,idx])
   }
   names(dt) <- dt_names
