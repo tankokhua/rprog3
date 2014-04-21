@@ -7,13 +7,9 @@ tidy_data <- function(directory=DEFAULT_DIR)
 
       
    #read dataset keeping only measurements with "-mean()" and "-std()".
-   if(0){ # 1 for debug
-     dt1 <- read_dataset("trial",  directory)
-     dt2 <- read_dataset("trial2", directory)
-   } else {
-     dt1 <- read_dataset("train", directory)
-     dt2 <- read_dataset("test", directory)
-   }
+   dt1 <- read_dataset("train", directory)
+   dt2 <- read_dataset("test", directory)
+
    # combine "train" and "test" datasets
    print('Merging <train> and <test> datasets.')
    dt <- merge(dt1, dt2, all=TRUE)
@@ -63,7 +59,6 @@ read_dataset <- function(datatype, dir=DEFAULT_DIR){
   # read features.txt
   features <- read_file("features.txt", dir)
   # get indexes of features with -mean() or -std()
-  #mean_std_idx <- grep("\\-(mean|std)\\(\\)", features[,2])
   mean_std_idx <- grep(MEAN_STD_REGEX, features[,2])
   X_file = paste0(datatype, "/X_", datatype, ".txt")
   X_dt <- read_file(X_file, dir)

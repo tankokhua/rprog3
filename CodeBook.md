@@ -2,6 +2,17 @@
 "run_analysis.R" returns a dataframe as well as a csv file.
 The column names can be seen from the output of *str* function below:
 
+* There are 30 **subjects** in the study.
+* The **activities** consist of following 6 items:
+  * Walking
+  * Walking_upstairs
+  * Walking_downstairs
+  * Sitting
+  * Standing
+  * Laying
+* The remaining 66 columns are the average readings of the measurements containing "-mean()" and "-std()" in the labels.
+* There are 180 rows (30 subjects x 6 activities).
+
 ```{r}
 > str(dt)
 'data.frame':	180 obs. of  68 variables:
