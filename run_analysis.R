@@ -1,4 +1,6 @@
 DEFAULT_DIR <- "UCI HAR Dataset"
+MEAN_STD_REGEX <- "\\-(mean|std)\\(\\)"
+
 tidy_data <- function(directory=DEFAULT_DIR)
 {
    cat(sprintf("Doing data cleaning in <%s> directory ...\n", directory))
@@ -36,6 +38,7 @@ read_file <- function(filename, dir=DEFAULT_DIR) {
   }
   dt
 }
+
 read_dataset <- function(datatype, dir=DEFAULT_DIR){
   # subject_<datatype>.txt: contains raw measurement data
   # X_<datatype>.txt      : 30 subjects
@@ -58,14 +61,15 @@ read_dataset <- function(datatype, dir=DEFAULT_DIR){
   dt_names <- c("subjects", "activities")
   
   # read features.txt
-  vec_features <- read_file("features.txt", dir)
+  features <- read_file("features.txt", dir)
   # get indexes of features with -mean() or -std()
-  mean_std_idx <- grep("\\-(mean|std)\\(\\)", vec_features[,2])
+  #mean_std_idx <- grep("\\-(mean|std)\\(\\)", features[,2])
+  mean_std_idx <- grep(MEAN_STD_REGEX, features[,2])
   X_file = paste0(datatype, "/X_", datatype, ".txt")
   X_dt <- read_file(X_file, dir)
   X_dt
   for (idx in mean_std_idx) {
-    dt_names <- c(dt_names, as.character(vec_features[idx,2]))
+    dt_names <- c(dt_names, as.character(features[idx,2]))
     dt <- cbind(dt, X_dt[,idx])
   }
   names(dt) <- dt_names
