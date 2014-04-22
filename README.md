@@ -10,8 +10,27 @@ This script performs the following steps below to generate a tidy data set from 
 
 
 ## Step 1: Combining the Datasets
-
-
+* Raw data hierarchy 
+```{r}
+  +---ear
+  +---train
+  |   \---src
+  |       \---main
+  |           \---resources
+  |               \---META-INF
+  +---primary-source
+  +---projects
+  |   \---logging
+  +---servlets
+  |   \---servlet
+  |       \---src
+  |           \---main
+  |               \---webapp
+  |                   \---WEB-INF
+  \---src
+      \---main
+          \---resources
+```          
 
 ## Output
 ```{r}
