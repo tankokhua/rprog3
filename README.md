@@ -9,12 +9,17 @@ This script performs the following steps below to generate a tidy data set from 
 5. Creates a second, independent tidy data set with the average of each variable for each activity and each subject.
 
 
-## Step 1: Combining the Datasets
-* Raw data hierarchy 
+## Description of Raw Data
+* The raw data has the file hierarchy as shown below:
+* There are 2 main datasets represented by the "train" and "test" folders.
+  * The "Inertial signals" folders in "test" and "train" datasets are not used.
+  * "X_(train|test).txt" contains the raw measurements.
+
+
 ```{r}
 .
 |-- README.txt
-|-- activity_labels.txt
+|-- activity_labels.txt              (contains the mapping to 6 activities)
 |-- features.txt
 |-- features_info.txt
 |-- test
@@ -28,7 +33,7 @@ This script performs the following steps below to generate a tidy data set from 
 |   |   |-- total_acc_x_test.txt
 |   |   |-- total_acc_y_test.txt
 |   |   `-- total_acc_z_test.txt
-|   |-- X_test.txt
+|   |-- X_test.txt                   (contains 2947 rows)
 |   |-- subject_test.txt
 |   `-- y_test.txt
 `-- train
@@ -42,15 +47,15 @@ This script performs the following steps below to generate a tidy data set from 
     |   |-- total_acc_x_train.txt
     |   |-- total_acc_y_train.txt
     |   `-- total_acc_z_train.txt
-    |-- X_train.txt
+    |-- X_train.txt                  (contains 7352 rows)
     |-- subject_train.txt
     `-- y_train.txt
 
 4 directories, 28 files
-
 ```          
 
-## Output
+## run_analysis.R
+### Output
 ```{r}
 > source("./run_analysis.R")
 > dt <- tidy_data()
@@ -77,8 +82,24 @@ Writing to tidydata.txt.
 * The output of the tidy data is saved in CSV format as "tidydata.txt".
 * Refer to CodeBook.md for the description of the "tidydata.txt".
 
+### Pseudocode
+1. Read "train" dataset using "read_dataset()"
+   * Read "activity_labels.txt" using "read_file()"
+     * Change the labels to lower case.
+   * Read "y_train.txt" using "read_file()"
+     * Replace the numerical value with the corresponding activity label. ie. '1' change to 'walking', etc.
+   * Read "subject_train.txt" using "read_file()"
+   * Create dataframe combining the "subjects" and the "activities"
+   * Read "X_test.txt" using "read_file()"
+     * Read "features.txt" using "read_file()" which to get the indices and column names for measurements in "X_test.txt"
+     * Use "grep" to obtain the measurements that matches the "\\-(mean|std)\\(\\)" expression, and add them to the dataframe (containing "subjects" and "activities") created earlier.
+   * Return the dataframe.
+2. Repeat step 1 for "test" dataset
+3. Combined the datasets in Steps 1 and 2.
+4. Melt the combined dataset using "subjects" and "activities" as id, and the measurements as variables.
+5. Dcast the "melt" dataset with formula "subjects+activities~variable", and "mean" to obtain the final dataset.
 
-## Contents of "run_analysis.R"
+### Contents
 
 ```{r}
 DEFAULT_DIR <- "UCI HAR Dataset"
