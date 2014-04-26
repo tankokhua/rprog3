@@ -66,9 +66,9 @@ Working on <test> dataset ...
 Writing to tidydata.txt.
 > 
 ```
-
-* function(directory="UCI HAR Dataset")
-  If no directory is provided, it assumes "UCI HAR Dataset" directory is in the same working
+### Notes:
+* Function call:  tidy_data(directory=DEFAULT_DIR)
+* If no directory is provided, it assumes "UCI HAR Dataset" directory is in the same working
   directory as "run_analysis.R".
 * A file "tidydata.csv" will be created, containing the data in step 5 above.
 * The regular expression used to extract measurements for the mean and standard deviation is 
@@ -78,7 +78,7 @@ Writing to tidydata.txt.
 ```{r}
          MEAN_STD_REGEX <- "\\-(mean|std)\\(\\)"
 ```
-
+* You can change the regular expression MEAN_STD_REGEX to filter the measurements you wanted.
 * The output of the tidy data is saved in CSV format as "tidydata.txt".
 * Refer to CodeBook.md for the description of the "tidydata.txt".
 
